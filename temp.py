@@ -2,42 +2,88 @@ import pandas
 from classes import *
 
 
+def open_xlsx(file_name: str):
+    """
+    Opens xlsx file and saves data in list.
+    :param file_name: Name of file
+    :return: List with file data.
+    """
+
+    file_path = './InputFiles/' + file_name
+
+    file_dataframe = pandas.read_excel(file_path)
+    file_data = file_dataframe.values.tolist()
+    file_data = prepare_data(file_data)
+
+    return file_data
+
+
 def prepare_data(data_from_xlsx: list or object):
+    """
+    Strips data from header.
+    :param data_from_xlsx: List with data from xlsx file.
+    :return: List of striped data.
+    """
+
     return data_from_xlsx[4:]
 
 
-def divide_datetime(serialized_string: str):
+data_info = open_xlsx("Recruiters-info.xlsx")
 
-    """
-    Divides input string into two strings classified as date and time. Removes parenthesis from time
-    :param serialized_string: String with date and time given in xlsx file.
-    :return: Tuple with two values: date and time.
-    """
+# space stripping
+for x in range(len(data_info)):
+    data_info[x][1] = data_info[x][1].replace(' ', '')
+    data_info[x][2] = data_info[x][2].replace(' ', '')
 
-    output_tuple = (serialized_string[:10], serialized_string[11:][1:-1])
-    return output_tuple
+for x in data_info:
+    print(x)
 
-
-def interpret_meetings(data_list: list):
-    meetings = []
-
-    for meeting_id in range(1, len(data_list[0])):
-        datetime = DateTime(divide_datetime(data[0][meeting_id]))
-
-        meetings.append(Meeting(datetime))
-
-    return meetings
+# list of names created from info file
+names_info = [(x[1] + ' ' + x[2]).lower() for x in data_info]
 
 
-dataframe = pandas.read_excel(r'./InputFiles/strawpoll-w4nWWRYrlnA-3c200498-8d5b-11ef-9651-3e6875717338.xlsx')
-data = dataframe.values.tolist()
-data = prepare_data(data)
+for x in names_info:
+    print(x)
+
+
+
+data = open_xlsx("Recruiters.xlsx")
+
+print()
 
 for x in data:
     print(x)
 
-meetings_list = interpret_meetings(data)
+# list of names created form availability file
+names = [x[0].lower() for x in data]
+names = [x.strip() for x in names]
+
+for x in names:
+    print(x)
 
 
-print(meetings_list[0].get_date().get_date())
-print(meetings_list[0].get_date().get_time())
+
+recruiters_list = []
+
+# first iteration through availability
+for x in range(len(names)):
+
+    # second iteration through info
+    for y in range(len(names_info)):
+
+        if names[x] == names_info[y]:
+
+            temp_availability = Availability(data[x][1:])
+
+            temp_candidate = Recruiter(names[x], temp_availability, data_info[y][3], data_info[y][5], data_info[y][4])
+
+            recruiters_list.append(temp_candidate)
+
+print(len(recruiters_list))
+print(len(names))
+
+print(recruiters_list[0].get())
+
+
+if not __name__ == '__main__':
+    pass

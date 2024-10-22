@@ -8,3 +8,12 @@ if not os.path.exists('./InputFiles'):
 db = DataBase()
 
 db.initiate_data_base()
+db.populate_meetings()
+db.populate_candidates()
+db.populate_recruiters()
+
+
+
+## TO DO
+## ZMIENIC DATAFRAME NA JSON
+## ZEMINIC FORME ZAPISU
