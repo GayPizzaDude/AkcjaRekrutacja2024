@@ -1,5 +1,6 @@
 import pandas
 from classes import *
+import json
 
 
 def open_xlsx(file_name: str):
@@ -83,6 +84,12 @@ print(len(recruiters_list))
 print(len(names))
 
 print(recruiters_list[0].get())
+print('\n\n\n\n')
+
+print(json.dumps(recruiters_list[0].to_dict(), indent=2))
+
+with open('test.json', 'w') as file:
+    pass
 
 
 if not __name__ == '__main__':

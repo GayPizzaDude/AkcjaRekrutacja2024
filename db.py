@@ -1,6 +1,7 @@
 import os
 from classes import *
 import pandas
+import json
 
 
 class DataBase:
@@ -50,9 +51,9 @@ class DataBase:
 
         recruiters_list = self.interpret_recruiters(recruiters_info, recruiters_availability)
 
-        recruiters_to_save = self.serialize_recruiter(recruiters_list)
+        #recruiters_to_save = self.serialize_recruiter(recruiters_list)
 
-        self.save_recruiters(recruiters_to_save)
+        self.save_recruiters(recruiters_list)
 
     # --------- STATIC METHODS ---------- #
 
@@ -228,6 +229,7 @@ class DataBase:
 
     def save_recruiters(self, serialized_list: list):
 
-        with open(self.data_base_path + 'Recruiters.txt', 'a', encoding='utf-8') as file:
-            for line in serialized_list:
-                file.write(line + '\n')
+        serialized_list = [x.to_dict() for x in serialized_list]
+
+        with open(self.data_base_path + 'Recruiters.json', 'w', encoding='utf-8') as file:
+            json.dump(serialized_list, file, indent=2)

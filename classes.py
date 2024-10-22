@@ -38,6 +38,44 @@ class Recruiter:
         temx = [self.name, self.availability.get_data(), self.dates_number, self.email, self.affiliation, self.faculty]
         return temx
 
+    def analyze_affiliation(self):
+
+        affiliation_list = []
+
+        if 'Komisja Kultury i Sportu' in self.affiliation:
+            affiliation_list.append('Komisja Kultury i Sportu')
+
+        if 'Komisja Komunikacji i Promocji' in self.affiliation:
+            affiliation_list.append('Komisja Komunikacji i Promocji')
+
+        if 'Sekcja Nowych Mediów' in self.affiliation:
+            affiliation_list.append('Sekcja Nowych Mediów')
+
+        if 'Zespół Ewaluacji, Formularzy i Rozwoju' in self.affiliation:
+            affiliation_list.append('Zespół Ewaluacji, Formularzy i Rozwoju')
+
+        if 'Komisja Rozwoju Struktury Informatycznej' in self.affiliation:
+            affiliation_list.append('Komisja Rozwoju Struktury Informatycznej')
+
+        if 'Komisja Współpracy Zewnętrznej i Przedsiębiorczości' in self.affiliation:
+            affiliation_list.append('Komisja Współpracy Zewnętrznej i Przedsiębiorczości')
+
+        if 'Komisja Dydaktyki i Jakości Kształcenia' in self.affiliation:
+            affiliation_list.append('Komisja Dydaktyki i Jakości Kształcenia')
+
+        self.affiliation = affiliation_list
+
+    def to_dict(self):
+
+        return {
+            'name': self.name,
+            'availability': self.availability.get_data(),
+            'dates_number': self.dates_number,
+            'email': self.email,
+            'affiliation': self.affiliation,
+            'faculty': self.faculty
+        }
+
 
 class Candidate:
 
@@ -51,7 +89,6 @@ class Candidate:
     phone_number = ''
     faculty = ''
     specific_info = ''
-
 
     def __init__(self, name: str, availability: Availability, meeting_occured: bool, email: str,
                  preferred_affiliation: str, phone_number: str, faculty: str, specific_info: str):
@@ -71,8 +108,48 @@ class Candidate:
 
         return tempx
 
+    def analyze_affiliation(self):
 
+        affiliation_list = []
 
+        if 'Komisja Kultury i Sportu' in self.preferred_affiliation:
+            affiliation_list.append('Komisja Kultury i Sportu')
+
+        if 'Komisja Komunikacji i Promocji' in self.preferred_affiliation:
+            affiliation_list.append('Komisja Komunikacji i Promocji')
+
+        if 'Sekcja Nowych Mediów' in self.preferred_affiliation:
+            affiliation_list.append('Sekcja Nowych Mediów')
+
+        if 'Zespół Ewaluacji, Formularzy i Rozwoju' in self.preferred_affiliation:
+            affiliation_list.append('Zespół Ewaluacji, Formularzy i Rozwoju')
+
+        if 'Komisja Rozwoju Struktury Informatycznej' in self.preferred_affiliation:
+            affiliation_list.append('Komisja Rozwoju Struktury Informatycznej')
+
+        if 'Komisja Współpracy Zewnętrznej i Przedsiębiorczości' in self.preferred_affiliation:
+            affiliation_list.append('Komisja Współpracy Zewnętrznej i Przedsiębiorczości')
+
+        if 'Komisja Dydaktyki i Jakości Kształcenia' in self.preferred_affiliation:
+            affiliation_list.append('Komisja Dydaktyki i Jakości Kształcenia')
+
+        if 'Jeszcze nie wiem' in self.preferred_affiliation:
+            affiliation_list.append('Jeszcze nie wiem')
+
+        self.preferred_affiliation = affiliation_list
+
+    def to_dict(self):
+
+        return {
+            'name': self.name,
+            'availability': self.availability.get_data(),
+            'meeting_occured': self.meeting_occured,
+            'email': self.email,
+            'preferred_affiliation': self.preferred_affiliation,
+            'phone_number': self.phone_number,
+            'faculty': self.faculty,
+            'specific_info': self.specific_info
+        }
 
 
 class DateTime:
