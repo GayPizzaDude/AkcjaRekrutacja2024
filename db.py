@@ -13,7 +13,7 @@ class DataBase:
         pass
 
     def create(self, name):
-        with open(self.data_base_path + name + '.txt', 'w') as file:
+        with open(self.data_base_path + name + '.json', 'w') as file:
             pass
 
     def initiate_data_base(self):
@@ -29,9 +29,9 @@ class DataBase:
         file_data = self.open_xlsx('Candidates.xlsx')
         meetings_list = self.interpret_meetings(file_data)
 
-        meetings_to_save = self.serialize_meeting(meetings_list)
+        #meetings_to_save = self.serialize_meeting(meetings_list)
 
-        self.save_meetings(meetings_to_save)
+        self.save_meetings(meetings_list)
 
     def populate_candidates(self):
 
@@ -40,9 +40,9 @@ class DataBase:
 
         candidates_list = self.interpret_candidates(candidates_info, candidates_availability)
 
-        candidates_to_save = self.serialize_candidate(candidates_list)
+        #candidates_to_save = self.serialize_candidate(candidates_list)
 
-        self.save_candidates(candidates_to_save)
+        self.save_candidates(candidates_list)
 
     def populate_recruiters(self):
 
@@ -185,9 +185,10 @@ class DataBase:
 
     def save_meetings(self, serialized_list: list):
 
-        with open(self.data_base_path + "Meetings.txt", 'a', encoding="utf-8") as file:
-            for line in serialized_list:
-                file.write(line + '\n')
+        serialized_list = [x.to_dict() for x in serialized_list]
+
+        with open(self.data_base_path + "Meetings.json", 'a', encoding="utf-8") as file:
+            json.dump(serialized_list, file, indent=2)
 
         print(len(serialized_list))
 
@@ -209,9 +210,10 @@ class DataBase:
 
     def save_candidates(self, serialized_list: list):
 
-        with open(self.data_base_path + "Candidates.txt", 'a', encoding="utf-8") as file:
-            for line in serialized_list:
-                file.write(line + '\n')
+        serialized_list = [x.to_dict() for x in serialized_list]
+
+        with open(self.data_base_path + "Candidates.json", 'a', encoding="utf-8") as file:
+            json.dump(serialized_list, file, indent=2)
 
     def serialize_recruiter(self, recruiters_list: list):
 

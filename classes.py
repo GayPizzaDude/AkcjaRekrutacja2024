@@ -222,3 +222,13 @@ class Meeting:
 
     def get_datetime_object(self):
         return self.date
+
+    def to_dict(self):
+        return {
+            'date': self.date.get_date_time(),
+            'candidateOccupation': self.candidateOccupation,
+            'candidateID': self.candidateID,
+            'recruiterOccupation': self.recruiterOccupation,
+            'recruiterID': self.recruiterID,
+            'meeting_occured1': self.meeting_occured
+        }
