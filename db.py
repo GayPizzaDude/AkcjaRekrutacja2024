@@ -37,6 +37,12 @@ class DataBase:
     # --------- STATIC METHODS ---------- #
 
     def create(self, name):
+
+        """
+        Creates empty json file with given file name.
+        :param name: Name of file
+        """
+
         with open(self.data_base_path + name + '.json', 'w') as file:
             pass
 
@@ -68,6 +74,19 @@ class DataBase:
 
     def interpret_candidates(self, candidates_info: list, candidates_availability: list):
 
+        """
+        Data mapping based on two files:
+        Candidates.xlsx
+        Candidates-info.xlsx
+
+        Name of candidate is used as key in mapping. Additional spaces stripping is implemented.
+        Two files are searched for the same name, if found Candidate object is filled with data.
+
+        :param candidates_info: Candidates-info.xlsx file content
+        :param candidates_availability: Candidates.xlsx file content
+        :return: List of Candidate object instances
+        """
+
         candidates_list = []
 
         # space stripping
@@ -98,6 +117,19 @@ class DataBase:
         return candidates_list
 
     def interpret_recruiters(self, recruiters_info: list, recruiters_availability: list):
+
+        """
+        Data mapping based on two files:
+        Recruiters.xlsx
+        Recruiters-info.xlsx
+
+        Name of candidate is used as key in mapping. Additional spaces stripping is implemented.
+        Two files are searched for the same name, if found Recruiter object is filled with data.
+
+        :param recruiters_info: Recruiters-info.xlsx file content
+        :param recruiters_availability: Recruiters.xlsx file content
+        :return: List of Recruiter object instances
+        """
 
         recruiters_list = []
 
@@ -155,18 +187,14 @@ class DataBase:
 
         return meetings
 
-    def serialize_meeting(self, meetings_list: list):
-
-        serialized_list = []
-
-        for meeting in meetings_list:
-            serialized_meeting = meeting.get_date() + '\t' + meeting.get_time() + '\t'
-
-            serialized_list.append(serialized_meeting)
-
-        return serialized_list
+    # DATABASE FILES SAVING METHODS
 
     def save_meetings(self, serialized_list: list):
+
+        """
+        Saves Meeting objects converted to dictionaries respected by json file format
+        :param serialized_list: List of strings ready to be saved
+        """
 
         serialized_list = [x.to_dict() for x in serialized_list]
 
@@ -175,44 +203,24 @@ class DataBase:
 
         print(len(serialized_list))
 
-
-    def serialize_candidate(self, candidates_list: list):
-
-        serialized_list = []
-
-        for candidate in candidates_list:
-
-            serialized_candidate = candidate.name + '\t' + str(candidate.availability.get_data()) + '\t' + \
-                                   str(candidate.meeting_occured) + '\t' + candidate.email + '\t' + \
-                                   candidate.preferred_affiliation + '\t' + str(candidate.phone_number) + '\t' + \
-                                   candidate.faculty + '\t' + str(candidate.specific_info) + '\t'
-
-            serialized_list.append(serialized_candidate)
-
-        return serialized_list
-
     def save_candidates(self, serialized_list: list):
+
+        """
+        Saves Candidate objects converted to dictionaries respected by json file format.
+        :param serialized_list: List of strings to be saved
+        """
 
         serialized_list = [x.to_dict() for x in serialized_list]
 
         with open(self.data_base_path + "Candidates.json", 'a', encoding="utf-8") as file:
             json.dump(serialized_list, file, indent=2)
 
-    def serialize_recruiter(self, recruiters_list: list):
-
-        serialized_list = []
-
-        for recruiter in recruiters_list:
-
-            serialized_recruiter = recruiter.name + '\t' + str(recruiter.availability.get_data()) + '\t' + \
-                                   str(recruiter.dates_number) + '\t' + recruiter.email + '\t' + \
-                                   recruiter.affiliation + '\t' + recruiter.faculty + '\t'
-
-            serialized_list.append(serialized_recruiter)
-
-        return serialized_list
-
     def save_recruiters(self, serialized_list: list):
+
+        """
+        Saves Recruiter objects converted to dictionaries respected by json file format.
+        :param serialized_list: List of strings to be saved
+        """
 
         serialized_list = [x.to_dict() for x in serialized_list]
 
@@ -220,41 +228,14 @@ class DataBase:
             json.dump(serialized_list, file, indent=2)
 
 
-    # DATABASE POPULATION
-
-    def populate_meetings(self):
-        file_data = self.open_xlsx('Candidates.xlsx')
-        meetings_list = self.interpret_meetings(file_data)
-
-        #meetings_to_save = self.serialize_meeting(meetings_list)
-
-        self.save_meetings(meetings_list)
-
-    def populate_candidates(self):
-
-        candidates_info = self.open_xlsx('Candidates-info.xlsx')
-        candidates_availability = self.open_xlsx('Candidates.xlsx')
-
-        candidates_list = self.interpret_candidates(candidates_info, candidates_availability)
-
-        #candidates_to_save = self.serialize_candidate(candidates_list)
-
-        self.save_candidates(candidates_list)
-
-    def populate_recruiters(self):
-
-        recruiters_info = self.open_xlsx('Recruiters-info.xlsx')
-        recruiters_availability = self.open_xlsx('Recruiters.xlsx')
-
-        recruiters_list = self.interpret_recruiters(recruiters_info, recruiters_availability)
-
-        #recruiters_to_save = self.serialize_recruiter(recruiters_list)
-
-        self.save_recruiters(recruiters_list)
-
     # ---------- PUBLIC METHODS ------------ #
 
     def initiate_data_base(self):
+
+        """
+        Database initialization. Creates empty Meetings.json, Candidates.json and Recruiters.json files.
+        Checks if DataBase folder already exists, if not new folder is created.
+        """
 
         if not os.path.exists('./DataBase'):
             os.mkdir('./DataBase')
@@ -262,3 +243,45 @@ class DataBase:
         self.create('Meetings')
         self.create('Candidates')
         self.create('Recruiters')
+
+    # DATABASE POPULATION
+
+    def populate_meetings(self):
+
+        """
+        Populate Meetings.json file with data given in InputFolder. Uses private methods for data analysis.
+        Overwrites existing file.
+        """
+
+        file_data = self.open_xlsx('Candidates.xlsx')
+        meetings_list = self.interpret_meetings(file_data)
+
+        self.save_meetings(meetings_list)
+
+    def populate_candidates(self):
+
+        """
+        Populate Candidates.json file with data given in InputFolder. Uses private methods for data analysis.
+        Overwrites existing file.
+        """
+
+        candidates_info = self.open_xlsx('Candidates-info.xlsx')
+        candidates_availability = self.open_xlsx('Candidates.xlsx')
+
+        candidates_list = self.interpret_candidates(candidates_info, candidates_availability)
+
+        self.save_candidates(candidates_list)
+
+    def populate_recruiters(self):
+
+        """
+        Populate Recruiters.json file with data given in InputFolder. Uses private methods for data analysis.
+        Overwrites existing file.
+        """
+
+        recruiters_info = self.open_xlsx('Recruiters-info.xlsx')
+        recruiters_availability = self.open_xlsx('Recruiters.xlsx')
+
+        recruiters_list = self.interpret_recruiters(recruiters_info, recruiters_availability)
+
+        self.save_recruiters(recruiters_list)
