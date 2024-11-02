@@ -6,56 +6,39 @@ import json
 
 class DataBase:
 
+    """
+    Controls local database. Initiates database, populates files with data placed in InputFolder. All data is saved
+    in json files:
+    Recruiters.json
+    Candidates.json
+    Meetings.json
+
+    All files are populated with instances of Recruiter, Candidate, Meeting objects, record ID are implemented for
+    faster CRUDE operations.
+
+    No additional constructor functionalities are implemented.
+
+    There are two properties:
+    data_base_path - string with path to local database. If given path does not exist, will be created.
+    input_files_path - string with path to files with input data. Four files are required:
+
+    Candidates.xlsx - candidates' availability
+    Candidates-info.xlsx - candidates' information given in google forms eg: name, email, preferred affiliation
+    Recruiters.xlsx - recruiters' availability
+    Recruiters-info.xlsx - recruiters' information given in google forms eg: name, email, affiliation
+    """
+
     data_base_path = './DataBase/'
     input_files_path = './InputFiles/'
 
     def __init__(self):
         pass
 
+    # --------- STATIC METHODS ---------- #
+
     def create(self, name):
         with open(self.data_base_path + name + '.json', 'w') as file:
             pass
-
-    def initiate_data_base(self):
-
-        if not os.path.exists('./DataBase'):
-            os.mkdir('./DataBase')
-
-        self.create('Meetings')
-        self.create('Candidates')
-        self.create('Recruiters')
-
-    def populate_meetings(self):
-        file_data = self.open_xlsx('Candidates.xlsx')
-        meetings_list = self.interpret_meetings(file_data)
-
-        #meetings_to_save = self.serialize_meeting(meetings_list)
-
-        self.save_meetings(meetings_list)
-
-    def populate_candidates(self):
-
-        candidates_info = self.open_xlsx('Candidates-info.xlsx')
-        candidates_availability = self.open_xlsx('Candidates.xlsx')
-
-        candidates_list = self.interpret_candidates(candidates_info, candidates_availability)
-
-        #candidates_to_save = self.serialize_candidate(candidates_list)
-
-        self.save_candidates(candidates_list)
-
-    def populate_recruiters(self):
-
-        recruiters_info = self.open_xlsx('Recruiters-info.xlsx')
-        recruiters_availability = self.open_xlsx('Recruiters.xlsx')
-
-        recruiters_list = self.interpret_recruiters(recruiters_info, recruiters_availability)
-
-        #recruiters_to_save = self.serialize_recruiter(recruiters_list)
-
-        self.save_recruiters(recruiters_list)
-
-    # --------- STATIC METHODS ---------- #
 
     def open_xlsx(self, file_name: str):
 
@@ -235,3 +218,47 @@ class DataBase:
 
         with open(self.data_base_path + 'Recruiters.json', 'w', encoding='utf-8') as file:
             json.dump(serialized_list, file, indent=2)
+
+
+    # DATABASE POPULATION
+
+    def populate_meetings(self):
+        file_data = self.open_xlsx('Candidates.xlsx')
+        meetings_list = self.interpret_meetings(file_data)
+
+        #meetings_to_save = self.serialize_meeting(meetings_list)
+
+        self.save_meetings(meetings_list)
+
+    def populate_candidates(self):
+
+        candidates_info = self.open_xlsx('Candidates-info.xlsx')
+        candidates_availability = self.open_xlsx('Candidates.xlsx')
+
+        candidates_list = self.interpret_candidates(candidates_info, candidates_availability)
+
+        #candidates_to_save = self.serialize_candidate(candidates_list)
+
+        self.save_candidates(candidates_list)
+
+    def populate_recruiters(self):
+
+        recruiters_info = self.open_xlsx('Recruiters-info.xlsx')
+        recruiters_availability = self.open_xlsx('Recruiters.xlsx')
+
+        recruiters_list = self.interpret_recruiters(recruiters_info, recruiters_availability)
+
+        #recruiters_to_save = self.serialize_recruiter(recruiters_list)
+
+        self.save_recruiters(recruiters_list)
+
+    # ---------- PUBLIC METHODS ------------ #
+
+    def initiate_data_base(self):
+
+        if not os.path.exists('./DataBase'):
+            os.mkdir('./DataBase')
+
+        self.create('Meetings')
+        self.create('Candidates')
+        self.create('Recruiters')
