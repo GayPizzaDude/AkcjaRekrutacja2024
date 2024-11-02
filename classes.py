@@ -1,12 +1,19 @@
 class Availability:
+
     """
-    lista true/false
+    Container with all possible meetings presented as list of boolean values.
+    True value corresponds with date marked on strawpoll.
+    Input is automatically analyzed from "-" and 1 into boolean values.
     """
 
-    dates = [] #moze zrobic liste list zeby byl jakikolwiek podzial na dni
+    dates = []
 
     def __init__(self, dates):
         self.dates = dates
+
+        self.analyze_input()
+
+    # GETTERS / SETTERS
 
     def get_data(self):
         return self.dates
@@ -14,11 +21,45 @@ class Availability:
     def get_day_data(self, day):
         pass
 
+    # Private Methods
+
+    def analyze_input(self):
+
+        """
+        Analyzes input and transforms dates property into a list of boolean values.
+        """
+
+        temp_list = []
+
+        for date in self.dates:
+            if date == '-':
+                temp_list.append(False)
+
+            if date == 1:
+                temp_list.append(True)
+
+        self.dates = temp_list
+
 
 class Recruiter:
 
+    """
+    Contains every data connected with recruiter:
+    name - name of recruiter,
+    availability - Availability object with marked dates from strawpoll
+    dates_number - sum of carried out meeting
+    email - email of recruiter
+    affiliation - affiliation to the committee. Automatically analyzed and stored in list
+    faculty - faculty of recruiter
+
+    Conversion into dictionary data type has been implemented as to_dict() method. It is required when object
+    needs to be saved as json format.
+
+    Only dates_number property has getter and setter. Other properties cannot be accessed.
+    """
+
     name = ''
-    availability = '' #availability object
+    availability = ''
     dates_number = 0
 
     email = ''
@@ -34,11 +75,23 @@ class Recruiter:
         self.affiliation = affiliation
         self.faculty = faculty
 
-    def get(self):
-        temx = [self.name, self.availability.get_data(), self.dates_number, self.email, self.affiliation, self.faculty]
-        return temx
+        self.analyze_affiliation()
+
+    # GETTERS / SETTERS
+
+    def get_dates_number(self):
+        return self.dates_number
+
+    def set_dates_number(self, dates_number_value: int):
+        self.dates_number = dates_number_value
+
+    # Private Methods
 
     def analyze_affiliation(self):
+
+        """
+        Analyzes affiliation given as an input. Converts raw input into a list with discrete values.
+        """
 
         affiliation_list = []
 
@@ -65,7 +118,16 @@ class Recruiter:
 
         self.affiliation = affiliation_list
 
+    # Public Methods
+
     def to_dict(self):
+
+        """
+        Converts all properties into a dictionary. All keys are properties names presented as strings pointing to
+        exact values of properties.
+        Availability is returned as list.
+        :return: Dictionary with all properties.
+        """
 
         return {
             'name': self.name,
@@ -79,9 +141,29 @@ class Recruiter:
 
 class Candidate:
 
+    """
+    Contains all information about candidate:
+    name - name of candidate,
+    availability - Availability object with data from strawpoll.
+    meeting_occurred - boolean value pointing to the fact, if candidate has already been on meeting
+    email - candidate's email
+    preferred_affiliation - committees checked on candidates google form
+    phone_number - candidate's phone number
+    faculty - candidate's faculty
+    specific_info - additional information left by candidate in google form
+
+    Preferred affiliation to the committee is automatically analyzed and converted from raw string into a list
+    with discrete values.
+
+    Properties getters and setters are not implemented.
+
+    Conversion into dictionary data type has been implemented as to_dict() method. It is required when object
+    needs to be saved as json format.
+    """
+
     name = ''
-    availability = '' #availability object
-    meeting_occured = False
+    availability = ''
+    meeting_occurred = False
 
     email = ''
     preferred_affiliation = None
@@ -90,25 +172,27 @@ class Candidate:
     faculty = ''
     specific_info = ''
 
-    def __init__(self, name: str, availability: Availability, meeting_occured: bool, email: str,
+    def __init__(self, name: str, availability: Availability, meeting_occurred: bool, email: str,
                  preferred_affiliation: str, phone_number: str, faculty: str, specific_info: str):
 
         self.name = name
         self.availability = availability
-        self.meeting_occured = meeting_occured
+        self.meeting_occurred = meeting_occurred
         self.email = email
         self.preferred_affiliation = preferred_affiliation
         self.phone_number = phone_number
         self.faculty = faculty
         self.specific_info = specific_info
 
-    def get(self):
-        tempx = [self.name, self.availability.get_data(), self.meeting_occured, self.email, self.preferred_affiliation,
-                 self.phone_number, self.faculty, self.specific_info]
+        self.analyze_affiliation()
 
-        return tempx
+    # Private Methods
 
     def analyze_affiliation(self):
+
+        """
+        Analyzes affiliation. Converts raw string given as an input into a list with specific values.
+        """
 
         affiliation_list = []
 
@@ -138,12 +222,21 @@ class Candidate:
 
         self.preferred_affiliation = affiliation_list
 
+    # Public Methods
+
     def to_dict(self):
+
+        """
+        Converts all properties into a dictionary. All keys are properties names presented as strings pointing to
+        exact values of properties.
+        Availability is returned as list.
+        :return: Dictionary with all properties.
+        """
 
         return {
             'name': self.name,
             'availability': self.availability.get_data(),
-            'meeting_occured': self.meeting_occured,
+            'meeting_occurred': self.meeting_occurred,
             'email': self.email,
             'preferred_affiliation': self.preferred_affiliation,
             'phone_number': self.phone_number,
@@ -153,6 +246,19 @@ class Candidate:
 
 
 class DateTime:
+
+    """
+    Storage for date of meeting. Consists of a day and time.
+
+    Double constructor has been implemented:
+    1 passed value - raw data given as a string. Automatically strapped into a day and time.
+    2 passed values - two strings saved as properties.
+
+    All properties are saved and returned as strings.
+
+    Save frame:
+    "YYYY-MM_DD HH-MM - HH-MM"
+    """
 
     date = ''
     time = ''
@@ -174,6 +280,8 @@ class DateTime:
             self.date = args[0][0]
             self.time = args[0][1]
 
+    # GETTERS / SETTERS
+
     def set_date(self, date):
         self.date = date
 
@@ -192,24 +300,26 @@ class DateTime:
 
 class Meeting:
 
-    date = None # DateTime object
+    """
+    Contains all information about recruitment meeting.
+    date - DateTime object specific to every occurred meeting
+    candidateID - NEEDS TO BE IMPLEMENTED - database optimization
+    recruiterID - NEEDS TO BE IMPLEMENTED - database optimization
+    meeting_occurred - boolean value corresponding to fact, if meeting has already occurred
 
-    candidateOccupation = None # Candidate object
+    Candidate and Recruiter objects are not saved in Meeting object. ID values of candidate and recruiters are used
+    instead. It is required for faster database lookups.
+    """
+
+    date = None
+
     candidateID = None
+    recruiterID = []
 
-    recruiterOccupation = [] # Recruiters objects
-    recruiterID = None
-
-    meeting_occured = False
+    meeting_occurred = False
 
     def __init__(self, datetime: DateTime):
         self.date = datetime
-
-    def get_candidate(self):
-        return self.candidateOccupation
-
-    def get_recruiters(self):
-        return self.recruiterOccupation
 
     def get_datetime(self):
         return self.date.get_date_time()
@@ -226,9 +336,7 @@ class Meeting:
     def to_dict(self):
         return {
             'date': self.date.get_date_time(),
-            'candidateOccupation': self.candidateOccupation,
             'candidateID': self.candidateID,
-            'recruiterOccupation': self.recruiterOccupation,
             'recruiterID': self.recruiterID,
-            'meeting_occured1': self.meeting_occured
+            'meeting_occurred': self.meeting_occurred
         }
